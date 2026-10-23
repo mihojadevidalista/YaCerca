@@ -31,7 +31,7 @@ body{
 
 /* ---------- Cabecera ---------- */
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem);letter-spacing:.12em;color:var(--gold-soft);text-transform:uppercase}
+h1{font-family:var(--title);font-weight:800;font-size:clamp(1.1rem,2.6vw,1.6rem);letter-spacing:.02em;color:var(--gold-soft);text-transform:none}
 .head-right{display:flex;align-items:center;gap:16px}
 .tally{display:flex;align-items:center;gap:8px;font-family:var(--title);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-2)}
 .tokens{display:flex;gap:5px}
@@ -359,7 +359,7 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
 .fs-btn{display:none}
 @media (max-width:640px), (hover:none) and (pointer:coarse) and (orientation:portrait){
   :root{
-    --cw:clamp(2.6rem,min(calc((100dvh - 28.3rem)/4.4),24vw),6rem);
+    --cw:clamp(2.6rem,min(calc((100dvh - 29.9rem)/4.4),24vw),6rem);
     --dcw:calc(var(--cw)*1.12);
     --mbw:clamp(6.1rem,28vw,7.6rem);
   }
@@ -367,12 +367,15 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
   .app{max-width:none;padding:0;gap:0;min-height:100dvh}
 
   /* Cabecera fuera del tablero */
-  header{padding:max(.5rem,env(safe-area-inset-top)) .75rem .4rem;gap:.15rem .6rem;justify-content:space-between}
+  header{padding:max(.4rem,env(safe-area-inset-top)) .9rem .45rem;gap:.2rem 1rem;justify-content:center;align-items:center}
   .head-right{display:contents}
-  h1{order:1;flex:1 1 auto;font-size:.88rem;letter-spacing:.08em}
-  .link{order:2;font-size:.85rem}
-  .tally{order:3;flex:1 1 34%;justify-content:center;font-size:.7rem}
-  .fs-btn{order:3;display:none;flex:0 0 auto;align-items:center;justify-content:center;width:1.9rem;height:1.9rem;padding:0;border-radius:.4rem;cursor:pointer;
+  .head-right::after{content:'';order:2;flex:0 0 100%;height:0}
+  h1{order:1;flex:0 0 100%;text-align:center;font-size:1.55rem;line-height:1.15;letter-spacing:.01em}
+  .link{order:2;font-size:.9rem}
+  .tally{order:3;flex:1 1 0;font-size:.72rem}
+  .head-right .tally:first-child{justify-content:flex-start}
+  .head-right .tally:nth-child(2){justify-content:flex-end}
+  .fs-btn{order:2;display:none;flex:0 0 auto;align-items:center;justify-content:center;width:1.8rem;height:1.8rem;padding:0;border-radius:.4rem;cursor:pointer;
     color:var(--paper-2);background:rgba(255,255,255,.06);border:1px solid rgba(230,205,138,.4)}
   html.fs-ok .fs-btn{display:inline-flex}
   .fs-btn svg{width:1.1rem;height:1.1rem}
