@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1a0f08">
-<title>Duelo de Cartas</title>
+<title>YaCerca</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,6 +209,26 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
 .btn:hover:not(:disabled){filter:brightness(1.06)}
 .btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 0 0 #000,0 3px 8px rgba(0,0,0,.4)}
 .btn:disabled{opacity:.38;cursor:not-allowed}
+
+
+/* ---------- Menú principal ---------- */
+.menu{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:1.25rem;overflow-y:auto;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 50% 40%,#23704b 0%,#175238 55%,#0a2b1d 100%)}
+.menu.show{display:flex;animation:menuIn .4s ease-out}
+@keyframes menuIn{from{opacity:0}to{opacity:1}}
+.menu-inner{width:100%;max-width:25rem;display:flex;flex-direction:column;align-items:center;text-align:center}
+.menu-fan{--cw:4.6rem;position:relative;width:17rem;height:7.6rem;margin-bottom:.4rem}
+.menu-fan .card{position:absolute;left:50%;bottom:0;margin-left:calc(var(--cw)/-2);transform-origin:50% 120%;animation:fanIn .7s cubic-bezier(.2,.9,.3,1.1) both}
+@keyframes fanIn{from{transform:rotate(0) translateY(1rem);opacity:0}}
+.menu-title{font-family:var(--title);font-weight:800;font-size:clamp(3rem,15vw,4.6rem);line-height:1.05;letter-spacing:-.01em;text-transform:none;color:var(--gold-soft);text-shadow:0 3px 0 rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.5);margin:.2rem 0 0}
+.menu-sub{font-style:italic;color:#d9e8d4;font-size:1.05rem;margin:.25rem 0 1.6rem}
+.menu-btns{width:100%;display:flex;flex-direction:column;gap:.8rem}
+.btn.xl{font-size:1rem;padding:1.15em 1em;width:100%;border-radius:10px;letter-spacing:.12em}
+.sheet-actions{display:flex;flex-direction:column;align-items:center;gap:.55rem;margin-top:14px}
+.sheet-actions .btn{margin-top:0}
+.sheet .btn.alt{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px rgba(42,29,18,.55)}
 
 /* ---------- Toast ---------- */
 .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:300;pointer-events:none;
@@ -425,11 +445,11 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
 
 <div class="app">
   <header>
-    <h1>Duelo de Cartas</h1>
+    <h1>YaCerca</h1>
     <div class="head-right">
       <div class="tally">Tú <div class="tokens" id="tok-p"></div></div>
       <div class="tally">Rival <div class="tokens" id="tok-a"></div></div>
-      <button class="link" id="btn-mp">Multijugador</button>
+      <button class="link" id="btn-mp">Menú</button>
       <button class="link" id="btn-rules">Reglas</button>
       <button class="fs-btn" id="btn-fs" type="button" aria-label="Pantalla completa" title="Pantalla completa">
         <svg class="i-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -497,7 +517,20 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
 
 </div>
 
-<div class="modal" id="modal"><div class="sheet"><div id="sheet-body"></div><button class="btn" id="sheet-btn">Continuar</button></div></div>
+<div class="menu" id="menu">
+  <div class="menu-inner">
+    <div class="menu-fan" id="menu-fan" aria-hidden="true"></div>
+    <div class="menu-title" role="heading" aria-level="1">YaCerca</div>
+    <p class="menu-sub">Acércate al número. Gana la ronda.</p>
+    <div class="menu-btns">
+      <button class="btn xl gold" id="m-solo">Modo solitario</button>
+      <button class="btn xl" id="m-mp">Multijugador</button>
+      <button class="btn xl line" id="m-rules">Reglas</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="sheet"><div id="sheet-body"></div><div class="sheet-actions"><button class="btn" id="sheet-btn">Continuar</button><button class="btn alt" id="sheet-btn2" style="display:none">Ir al menú</button></div></div></div>
 
 <script>
 /* ============ Datos ============ */
@@ -536,7 +569,7 @@ const state={
   deck:[],gone:[],playerHand:[],aiHand:[],
   playerReady:false,aiReady:false,playerSkipNext:false,aiSkipNext:false,
   currentTurn:null,playerScore:0,aiScore:0,roundOver:false,matchOver:false,aiBusy:false,
-  drew:false,usedWild:false,selectedWild:null,note:'',modalOpen:false,aiLost:false,
+  drew:false,usedWild:false,selectedWild:null,note:'',modalOpen:false,menuOpen:false,aiLost:false,
   shownP:new Set(),shownA:new Set(),revealA:new Set()
 };
 
@@ -660,7 +693,7 @@ function setDie(el,v){
 
 /* ============ Reglas de juego ============ */
 function canPlayerAct(){
-  return state.diceRolled&&state.dicePhase==='gone'&&state.currentTurn==='player'&&!state.roundOver&&!state.matchOver&&!state.playerReady&&!state.aiBusy&&!state.modalOpen;
+  return state.diceRolled&&state.dicePhase==='gone'&&state.currentTurn==='player'&&!state.roundOver&&!state.matchOver&&!state.playerReady&&!state.aiBusy&&!state.modalOpen&&!state.menuOpen;
 }
 function wildBlock(type){
   if(!canPlayerAct())return 'Ahora no puedes usar comodines.';
@@ -682,13 +715,13 @@ function startRound(){
     playerHand:[],aiHand:[],playerReady:false,aiReady:false,playerSkipNext:false,aiSkipNext:false,
     currentTurn:null,roundOver:false,aiBusy:false,drew:false,usedWild:false,selectedWild:null,note:'',dicePhase:'idle',lostTurn:false,aiLost:false});
   state.shownP=new Set();state.shownA=new Set();state.revealA=new Set();
-  log(state.starter==='player'?'Nueva ronda: empiezas tú.':'Nueva ronda: empieza el rival.','w');
+  if(!state.menuOpen)log(state.starter==='player'?'Nueva ronda: empiezas tú.':'Nueva ronda: empieza el rival.','w');
   mpPop(state.starter==='player'?'Nueva ronda: empieza el rival.':'Nueva ronda: empiezas tú.','w');
   render();
 }
 
 function rollDice(){
-  if(state.diceRolled||state.rolling||state.matchOver||state.modalOpen)return;
+  if(state.diceRolled||state.rolling||state.matchOver||state.modalOpen||state.menuOpen)return;
   if(mp.on&&mp.role==='guest'){mpSend({a:'roll'});return}
   state.rolling=true;
   const e1=$('die1'),e2=$('die2');
@@ -1041,7 +1074,7 @@ function revealRow(hand){
 }
 function openModal(html,btnText,onClick){
   $('sheet-body').innerHTML=html;
-  const b=$('sheet-btn');b.disabled=false;b.textContent=btnText;b.onclick=()=>{fxStop();state.modalOpen=false;$('modal').classList.remove('show');onClick&&onClick()};
+  const b=$('sheet-btn');$('sheet-btn2').style.display='none';b.disabled=false;b.textContent=btnText;b.onclick=()=>{fxStop();state.modalOpen=false;$('modal').classList.remove('show');onClick&&onClick()};
   state.modalOpen=true;$('modal').classList.add('show');
 }
 function showResult(w,why,pT,aT,pD,aD){
@@ -1057,7 +1090,8 @@ function showResult(w,why,pT,aT,pD,aD){
     html+=`<div class="final">${state.playerScore>=GOAL_WINS?'¡Has ganado el duelo!':'El rival gana el duelo'}</div>`;
     render();
     fxStart(state.playerScore>=GOAL_WINS?'win':'lose',true);
-    ;(mp.on?openModalMP:openModal)(html,'Nuevo duelo',()=>{state.playerScore=0;state.aiScore=0;state.matchOver=false;state.starter='ai';startRound()});
+    ;(mp.on?openModalMP:openModal)(html,'Volver a jugar',()=>{state.playerScore=0;state.aiScore=0;state.matchOver=false;state.starter='ai';startRound()});
+    showMenuBtn();
   }else{
     render();
     ;(mp.on?openModalMP:openModal)(html,'Siguiente ronda',startRound);
@@ -1357,8 +1391,8 @@ function mpGuestData(m){
   else if(m.t==='hand')showHandBanner();
   else if(m.t==='starter')showStarterBanner(m.mine);
   else if(m.t==='result'){
-    openModalMP(m.html,m.over?'Nuevo duelo':'Siguiente ronda',()=>{});
-    if(m.over)fxStart(m.won?'win':'lose',true);
+    openModalMP(m.html,m.over?'Volver a jugar':'Siguiente ronda',()=>{});
+    if(m.over){fxStart(m.won?'win':'lose',true);showMenuBtn()}
   }
 }
 
@@ -1451,8 +1485,7 @@ function mpJoin(raw){
 }
 function mpConnected(){
   mp.on=true;
-  closeModalLocal();fxStop();
-  $('btn-mp').textContent='Salir de la sala';
+  closeModalLocal();fxStop();hideMenu();
   if(mp.role==='host'){
     mp.ready={h:false,g:false};
     Object.assign(state,{playerScore:0,aiScore:0,matchOver:false,starter:'ai'});
@@ -1471,14 +1504,34 @@ function mpLost(conn){
   if(conn!==mp.conn||!mp.on)return;
   mpCleanup();
   fxStop();
-  openModal('<h2>Conexión perdida</h2><p class="why">Tu rival se desconectó.</p>','Jugar contra la IA',mpExit);
+  openModal('<h2>Rival fuera de la sala</h2><p class="why">Tu rival salió o se desconectó.</p>','Ir al menú',goToMenu);
 }
-function mpExit(){
+function mpExit(){goToMenu()}
+
+/* ============ Menú principal ============ */
+function buildMenuFan(){
+  const f=$('menu-fan');if(!f)return;
+  const set=[['shield',4,-27],['bow',3,-9],['axe',2,9],['sword',4,27]];
+  f.innerHTML='';
+  set.forEach(([suit,v,rot],i)=>{
+    const el=cardEl({type:'normal',suit,value:v});
+    el.style.transform=`rotate(${rot}deg)`;
+    f.appendChild(el);
+  });
+}
+function showMenu(){state.menuOpen=true;$('menu').classList.add('show')}
+function hideMenu(){state.menuOpen=false;$('menu').classList.remove('show')}
+function goToMenu(){
   mpCleanup();
   closeModalLocal();fxStop();
-  $('btn-mp').textContent='Multijugador';
   Object.assign(state,{playerScore:0,aiScore:0,matchOver:false,starter:'ai'});
+  state.menuOpen=true;
   startRound();
+  showMenu();
+}
+function showMenuBtn(){
+  const b=$('sheet-btn2');b.style.display='';b.disabled=false;
+  b.onclick=()=>{goToMenu()};
 }
 
 /* ============ Eventos ============ */
@@ -1488,13 +1541,16 @@ $('btn-pass').addEventListener('click',playerPass);
 $('btn-ready').addEventListener('click',playerClose);
 $('btn-rules').addEventListener('click',()=>{if(!state.modalOpen)showRules()});
 $('btn-mp').addEventListener('click',()=>{
-  if(mp.on){if(confirm('¿Salir de la sala y volver a jugar contra la IA?'))mpExit()}
-  else if(!state.modalOpen)openLobby();
+  if(state.modalOpen||state.menuOpen)return;
+  if(confirm(mp.on?'¿Volver al menú? Se cerrará la sala y la partida.':'¿Volver al menú? Se pierde la partida en curso.'))goToMenu();
 });
+$('m-solo').addEventListener('click',hideMenu);
+$('m-mp').addEventListener('click',()=>{if(!state.modalOpen)openLobby()});
+$('m-rules').addEventListener('click',()=>{if(!state.modalOpen)showRules()});
 $('deck').addEventListener('click',()=>{if(canPlayerAct()&&!state.drew)playerDraw()});
 window.addEventListener('resize',()=>{fan($('p-hand'));fan($('ai-hand'))});
 document.addEventListener('keydown',e=>{
-  if(state.modalOpen||state.matchOver)return;
+  if(state.modalOpen||state.matchOver||state.menuOpen)return;
   const k=e.key.toLowerCase();
   if(!state.diceRolled){if(k===' '||k==='enter'){e.preventDefault();rollDice()}return}
   if(k==='r')playerDraw();else if(k==='p')playerPass();else if(k==='l')playerClose();
@@ -1544,7 +1600,10 @@ if(FS_REQ&&MQ_TOUCH.matches){
   fsSync();
 }
 
+buildMenuFan();
+state.menuOpen=true;
 startRound();
+showMenu();
 {const hm=/sala=([A-Za-z0-9]{4,6})/.exec(location.hash);if(hm)setTimeout(()=>openLobby(hm[1]),300)}
 </script>
 </body>
