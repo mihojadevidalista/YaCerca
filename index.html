@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a0f08">
 <title>Duelo de Cartas</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -331,56 +332,72 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
 .lobby-code{font-family:var(--title);font-weight:800;font-size:2.6rem;letter-spacing:.3em;padding-left:.3em;margin:10px 0;color:#7a1b22}
 .lobby-msg{min-height:1.4em;font-style:italic;color:#6a5632;font-size:1rem}
 .lobby-msg.err{color:#9e1b24}
-/* ============ CELULAR (solo pantallas <= 640px; escritorio no cambia) ============ */
-@media (max-width:640px){
+/* ============ CELULAR ============
+   Se activa en pantallas angostas o en teléfonos en vertical (aunque el navegador
+   use "sitio de escritorio"). Todo va en rem y el rem se ajusta con JS al ancho real,
+   así el tablero se ve igual de grande en cualquier teléfono. Escritorio no cambia. */
+.fs-btn{display:none}
+@media (max-width:640px), (hover:none) and (pointer:coarse) and (orientation:portrait){
   :root{
-    --cw:clamp(50px,min(calc((100dvh - 438px)/4.4),24vw),96px);
+    --cw:clamp(2.6rem,min(calc((100dvh - 28.3rem)/4.4),24vw),6rem);
     --dcw:calc(var(--cw)*1.12);
-    --mbw:clamp(98px,28vw,122px);
+    --mbw:clamp(6.1rem,28vw,7.6rem);
   }
-  body{font-size:15px}
+  body{font-size:.9375rem}
   .app{max-width:none;padding:0;gap:0;min-height:100dvh}
 
   /* Cabecera fuera del tablero */
-  header{padding:8px 12px 6px;gap:2px 10px;justify-content:space-between}
+  header{padding:max(.5rem,env(safe-area-inset-top)) .75rem .4rem;gap:.15rem .6rem;justify-content:space-between}
   .head-right{display:contents}
-  h1{order:1;flex:1 1 auto;font-size:.92rem;letter-spacing:.08em}
-  .link{order:2;font-size:.88rem}
-  .tally{order:3;flex:1 1 40%;justify-content:center;font-size:.7rem}
+  h1{order:1;flex:1 1 auto;font-size:.88rem;letter-spacing:.08em}
+  .link{order:2;font-size:.85rem}
+  .tally{order:3;flex:1 1 34%;justify-content:center;font-size:.7rem}
+  .fs-btn{order:3;display:none;flex:0 0 auto;align-items:center;justify-content:center;width:1.9rem;height:1.9rem;padding:0;border-radius:.4rem;cursor:pointer;
+    color:var(--paper-2);background:rgba(255,255,255,.06);border:1px solid rgba(230,205,138,.4)}
+  html.fs-ok .fs-btn{display:inline-flex}
+  .fs-btn svg{width:1.1rem;height:1.1rem}
+  .fs-btn .i-out,.fs-btn[data-on="1"] .i-in{display:none}
+  .fs-btn[data-on="1"] .i-out{display:block}
 
   /* El tablero verde ocupa todo */
   .rim{padding:0;border-radius:0;background:none;box-shadow:none}
-  .felt{border-radius:0;padding:8px 10px max(8px,env(safe-area-inset-bottom));gap:4px;box-shadow:inset 0 0 46px rgba(0,0,0,.55)}
+  .felt{border-radius:0;padding:.5rem .65rem max(.5rem,env(safe-area-inset-bottom));gap:.25rem;box-shadow:inset 0 0 46px rgba(0,0,0,.55)}
 
   /* Manos: cartas grandes y solapadas */
-  .hand{min-height:calc(var(--cw)*1.42 + 8px);padding:4px 2px}
-  .seat{justify-content:center;min-height:22px;gap:8px}
+  .hand{min-height:calc(var(--cw)*1.42 + .5rem);padding:.25rem .125rem}
+  .seat{justify-content:center;min-height:1.4rem;gap:.5rem}
   .seat .who{font-size:.8rem}
   .seat .stat{font-size:.9rem}
 
   /* Centro: objetivo arriba, mazo debajo, alineados en vertical */
-  .center{flex:1;justify-content:center;gap:4px}
-  .table-row{flex-direction:column;flex-wrap:nowrap;gap:6px;justify-content:center;min-height:calc(var(--dcw)*1.42 + 160px)}
+  .center{flex:1;justify-content:center;gap:.25rem}
+  .table-row{flex-direction:column;flex-wrap:nowrap;gap:.4rem;justify-content:center;min-height:calc(var(--dcw)*1.42 + 10rem)}
   .dice-wrap{order:1}
   .deck-slot{order:2}
   .deck-slot.hide{margin-right:0}
   .deck-wrap{--cw:var(--dcw)}
-  .goal.big{width:clamp(66px,calc(var(--cw)*1.05),84px);height:clamp(66px,calc(var(--cw)*1.05),84px);font-size:clamp(1.9rem,calc(var(--cw)*.5),2.6rem)}
+  .die{width:clamp(5.25rem,calc(var(--cw)*1.5),8.25rem);height:clamp(5.25rem,calc(var(--cw)*1.5),8.25rem)}
+  .goal.big{width:clamp(4.1rem,calc(var(--cw)*1.05),5.25rem);height:clamp(4.1rem,calc(var(--cw)*1.05),5.25rem);font-size:clamp(1.9rem,calc(var(--cw)*.5),2.6rem)}
 
   /* Fila inferior: Pasar (izq) · texto (centro) · Cerrar mano (der), todo alineado abajo */
-  .player-zone{--bw:var(--mbw);display:grid;grid-template-columns:var(--mbw) minmax(0,1fr) var(--mbw);grid-template-rows:auto auto;column-gap:8px;align-items:end}
+  .player-zone{--bw:var(--mbw);display:grid;grid-template-columns:var(--mbw) minmax(0,1fr) var(--mbw);grid-template-rows:auto auto;column-gap:.5rem;align-items:end}
   .player-zone .hand{grid-column:1 / -1;grid-row:1}
   .bottom-row{display:contents}
   .bottom-row > span{display:none}
   .bottom-row .pass-btn{position:static;width:var(--mbw);height:calc(var(--mbw)*.56);margin:0 0 calc(var(--mbw)*.1);padding:.4em;grid-column:1;grid-row:2;align-self:end;
-    font-size:.82rem;letter-spacing:.1em;line-height:1.2;white-space:normal;border-radius:10px}
+    font-size:.82rem;letter-spacing:.1em;line-height:1.2;white-space:normal;border-radius:.6rem}
   .seat-p{grid-column:2;grid-row:2;align-self:end;align-items:center;text-align:center;padding-bottom:calc(var(--mbw)*.1);gap:2px}
-  .seat-p .l1,.seat-p .l2{justify-content:center;gap:6px}
+  .seat-p .l1,.seat-p .l2{justify-content:center;gap:.4rem}
   .seat-p .who{font-size:.95rem}
   .seat-p .stat{font-size:1rem}
   .close-btn{--bw:var(--mbw);grid-column:3;grid-row:2;align-self:end;font-size:.82rem}
 
-  .wb-name{font-size:1.3rem}.wb-icon{width:56px;height:56px}
+  /* Avisos y pergamino proporcionales */
+  .wb-name{font-size:1.3rem}.wb-icon{width:3.5rem;height:3.5rem}
+  .hand-banner{--hs:clamp(10.6rem,48vw,14.4rem)}
+  .pops{width:min(92vw,35rem)}
+  .sheet{max-width:min(92vw,35rem)}
+  .rev-cards{--cw:3.4rem}
 }
 </style>
 </head>
@@ -414,6 +431,10 @@ h1{font-family:var(--title);font-weight:700;font-size:clamp(1.1rem,2.6vw,1.5rem)
       <div class="tally">Rival <div class="tokens" id="tok-a"></div></div>
       <button class="link" id="btn-mp">Multijugador</button>
       <button class="link" id="btn-rules">Reglas</button>
+      <button class="fs-btn" id="btn-fs" type="button" aria-label="Pantalla completa" title="Pantalla completa">
+        <svg class="i-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="i-out" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </header>
 
@@ -1478,6 +1499,50 @@ document.addEventListener('keydown',e=>{
   if(!state.diceRolled){if(k===' '||k==='enter'){e.preventDefault();rollDice()}return}
   if(k==='r')playerDraw();else if(k==='p')playerPass();else if(k==='l')playerClose();
 });
+
+
+/* ============ Celular: escala y pantalla completa ============ */
+const MQ_MOBILE=matchMedia('(max-width:640px), (hover:none) and (pointer:coarse) and (orientation:portrait)');
+const MQ_TOUCH=matchMedia('(hover:none) and (pointer:coarse)');
+function fitMobile(){
+  const root=document.documentElement;
+  if(!(MQ_MOBILE.matches&&MQ_TOUCH.matches)){root.style.fontSize='';return}
+  const vw=innerWidth,sw=Math.min(screen.width,screen.height)||vw;
+  let r;
+  if(vw<=700)r=vw/390*16;                                              // teléfono normal
+  else if(sw<=700)r=Math.min(Math.max(sw,320),480)/390*16*(vw/sw);     // navegador en "sitio de escritorio"
+  else r=20;                                                           // tableta
+  root.style.fontSize=Math.min(60,Math.max(12,r)).toFixed(2)+'px';
+}
+function refit(){fitMobile();requestAnimationFrame(()=>{fan($('p-hand'));fan($('ai-hand'))})}
+fitMobile();
+addEventListener('resize',refit);addEventListener('orientationchange',refit);
+if(MQ_MOBILE.addEventListener)MQ_MOBILE.addEventListener('change',refit);
+
+const FS_EL=document.documentElement;
+const FS_REQ=FS_EL.requestFullscreen||FS_EL.webkitRequestFullscreen;
+const fsOn=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
+function fsEnter(){
+  try{
+    const p=FS_REQ.call(FS_EL,{navigationUI:'hide'});
+    if(p&&p.then)p.then(()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}}).catch(()=>{});
+  }catch(e){}
+}
+function fsExit(){try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}
+function fsSync(){$('btn-fs').dataset.on=fsOn()?'1':'0';$('btn-fs').title=$('btn-fs').ariaLabel=fsOn()?'Salir de pantalla completa':'Pantalla completa';refit()}
+if(FS_REQ&&MQ_TOUCH.matches){
+  document.documentElement.classList.add('fs-ok');
+  $('btn-fs').addEventListener('click',e=>{e.stopPropagation();if(fsOn())fsExit();else fsEnter()});
+  document.addEventListener('fullscreenchange',fsSync);document.addEventListener('webkitfullscreenchange',fsSync);
+  /* Primer toque en la pantalla → entra solo a pantalla completa (el navegador exige un gesto del usuario) */
+  const auto=e=>{
+    document.removeEventListener('click',auto,true);
+    if(e.target.closest&&e.target.closest('#btn-fs'))return;
+    if(MQ_MOBILE.matches&&!fsOn())fsEnter();
+  };
+  document.addEventListener('click',auto,true);
+  fsSync();
+}
 
 startRound();
 {const hm=/sala=([A-Za-z0-9]{4,6})/.exec(location.hash);if(hm)setTimeout(()=>openLobby(hm[1]),300)}
